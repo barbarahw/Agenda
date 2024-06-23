@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LoginWindow extends JFrame {
 
@@ -36,6 +38,16 @@ public class LoginWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginWindow() {
+		initComponents();
+	}
+	
+	private void abrirCadastro() {
+		CadastroWindow cadastroWindow = new CadastroWindow();
+		cadastroWindow.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 364, 300);
 		contentPane = new JPanel();
@@ -67,6 +79,11 @@ public class LoginWindow extends JFrame {
 		contentPane.add(btnEntrar);
 		
 		JButton btnCadastrar = new JButton("Cadastrar");
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirCadastro();
+			}
+		});
 		btnCadastrar.setBounds(244, 213, 96, 21);
 		contentPane.add(btnCadastrar);
 		
