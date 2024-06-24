@@ -21,16 +21,21 @@ import javax.swing.table.DefaultTableModel;
 import entities.Agenda;
 import entities.Usuario;
 import service.AgendaService;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AgendaWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField txtNome;
+	private JTextField txtDescricao;
 	private JTable table;
+	private JSpinner spId;
 	
 	private AgendaService agendaService;
+	
+	private String usuario;
 
 	/**
 	 * Launch the application.
@@ -53,21 +58,51 @@ public class AgendaWindow extends JFrame {
 		modelo.fireTableDataChanged();
 		modelo.setRowCount(0);
 		
-		/*try {
+		try {
 			
-			List<Agenda> agendas = this.agendaService.buscarAgendas("joao");
+			List<Agenda> agendas = this.agendaService.buscarAgendas();
 			
 			for (Agenda agenda : agendas) {
 				modelo.addRow(new Object[] {
-				agenda.getNome(),
-				agenda.getDescricao(),
-				agenda.getUsuario().getUsuario()
+				agenda.getId(),
+				agenda.getNome()
 				});
 			}
 			
 		} catch (SQLException | IOException e) {
 			JOptionPane.showMessageDialog(null, "Nenhuma agenda encontrada", "busca", JOptionPane.ERROR_MESSAGE);
-		}*/
+		}
+	}
+	
+	private void criarAgenda() {
+		try {
+			Agenda agenda = new Agenda();
+			
+			agenda.setNome(txtNome.getText());
+			agenda.setDescricao(txtDescricao.getText());
+			
+			this.agendaService.criarAgenda(agenda);
+		} catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, "erro ao cadastrar agenda", "erro", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void atualizarAgenda() {
+		try {
+			Agenda agenda = new Agenda();
+			
+			agenda.setId(Integer.parseInt(this.spId.getValue().toString()));
+			agenda.setNome(txtNome.getText());
+			agenda.setDescricao(txtDescricao.getText());
+			
+			this.agendaService.atualizar(agenda);
+		}catch (IOException | SQLException e) {
+			JOptionPane.showMessageDialog(null, "erro ao atualizar agenda", "erro", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void verCompromissos() {
+		
 	}
 	
 	public AgendaWindow() {
@@ -90,7 +125,7 @@ public class AgendaWindow extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Agendas", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(10, 10, 523, 144);
+		panel.setBounds(10, 10, 523, 180);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -98,31 +133,50 @@ public class AgendaWindow extends JFrame {
 		lblNomeAgenda.setBounds(10, 22, 45, 13);
 		panel.add(lblNomeAgenda);
 		
-		textField = new JTextField();
-		textField.setBounds(68, 19, 445, 19);
-		panel.add(textField);
-		textField.setColumns(10);
+		txtNome = new JTextField();
+		txtNome.setBounds(68, 19, 445, 19);
+		panel.add(txtNome);
+		txtNome.setColumns(10);
 		
 		JLabel lblDescricao = new JLabel("Descrição: ");
 		lblDescricao.setBounds(10, 59, 68, 13);
 		panel.add(lblDescricao);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(78, 56, 435, 42);
-		panel.add(textField_1);
-		textField_1.setColumns(10);
+		txtDescricao = new JTextField();
+		txtDescricao.setBounds(78, 56, 435, 42);
+		panel.add(txtDescricao);
+		txtDescricao.setColumns(10);
 		
 		JButton btnCriarAgenda = new JButton("Criar Agenda");
+		btnCriarAgenda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				criarAgenda();
+			}
+		});
 		btnCriarAgenda.setBounds(390, 113, 123, 21);
 		panel.add(btnCriarAgenda);
 		
 		JButton btnAtualizar = new JButton("Atualizar");
+		btnAtualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				atualizarAgenda();
+			}
+		});
 		btnAtualizar.setBounds(53, 113, 85, 21);
 		panel.add(btnAtualizar);
 		
-		JSpinner spinner = new JSpinner();
-		spinner.setBounds(13, 114, 30, 20);
-		panel.add(spinner);
+		spId = new JSpinner();
+		spId.setBounds(10, 135, 30, 20);
+		panel.add(spId);
+		
+		JButton btnCompromissos = new JButton("Ver Compromissos");
+		btnCompromissos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				verCompromissos();
+			}
+		});
+		btnCompromissos.setBounds(53, 144, 147, 26);
+		panel.add(btnCompromissos);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 200, 523, 150);

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -60,7 +61,13 @@ public class LoginWindow extends JFrame {
 	}
 	
 	private void verificarUsuario() {
-		this.usuarioService.verificarUsuario();
+		if (this.usuarioService.verificarUsuario()) {
+			abrirAgendaWindow();
+		} else {
+			JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
 	}
 	
 	private void initComponents() {

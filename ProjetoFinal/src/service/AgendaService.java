@@ -17,9 +17,21 @@ public class AgendaService {
 		
 	}
 	
-	public List<Agenda> buscarAgendas(String usuario) throws SQLException, IOException {
+	public void criarAgenda(Agenda agenda) throws SQLException, IOException {
+		Connection conn = BancoDados.conectar();
+		
+		new AgendaDAO(conn).cadastrar(agenda);
+	}
+	
+	public List<Agenda> buscarAgendas() throws SQLException, IOException {
 		Connection conn = BancoDados.conectar();
 	
-		return new AgendaDAO(conn).buscarAgendas(usuario);
+		return new AgendaDAO(conn).buscarAgendas();
+	}
+	
+	public void atualizar(Agenda agenda) throws SQLException, IOException {
+		Connection conn = BancoDados.conectar();
+		
+		new AgendaDAO(conn).atualizar(agenda);
 	}
 }

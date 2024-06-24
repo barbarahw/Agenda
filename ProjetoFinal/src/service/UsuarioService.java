@@ -30,7 +30,9 @@ public class UsuarioService {
 		new UsuarioDAO(conn).excluirUsuario();
 	}
 	
-	public void verificarUsuario() {
+	public boolean verificarUsuario() {
+		
+		return false;
 		
 	}
 
