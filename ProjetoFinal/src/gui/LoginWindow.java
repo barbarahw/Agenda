@@ -1,15 +1,17 @@
 package gui;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import service.UsuarioService;
 
 public class LoginWindow extends JFrame {
 
@@ -17,6 +19,8 @@ public class LoginWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtUsuario;
 	private JTextField txtSenha;
+	
+	private UsuarioService usuarioService;
 
 	/**
 	 * Launch the application.
@@ -39,12 +43,24 @@ public class LoginWindow extends JFrame {
 	 */
 	public LoginWindow() {
 		initComponents();
+		
+		this.usuarioService = new UsuarioService();
 	}
 	
 	private void abrirCadastro() {
 		CadastroWindow cadastroWindow = new CadastroWindow();
 		cadastroWindow.setVisible(true);
 		this.setVisible(false);
+	}
+	
+	private void abrirAgendaWindow() {
+		AgendaWindow agendaWindow = new AgendaWindow();
+		agendaWindow.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	private void verificarUsuario() {
+		this.usuarioService.verificarUsuario();
 	}
 	
 	private void initComponents() {
@@ -75,6 +91,11 @@ public class LoginWindow extends JFrame {
 		txtSenha.setColumns(10);
 		
 		JButton btnEntrar = new JButton("Entrar");
+		btnEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				verificarUsuario();
+			}
+		});
 		btnEntrar.setBounds(255, 136, 85, 21);
 		contentPane.add(btnEntrar);
 		

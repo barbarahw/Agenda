@@ -22,6 +22,7 @@ import com.toedter.calendar.JDateChooser;
 
 import entities.Usuario;
 import service.UsuarioService;
+import javax.swing.JPasswordField;
 
 public class CadastroWindow extends JFrame {
 
@@ -30,7 +31,6 @@ public class CadastroWindow extends JFrame {
 	private JTextField txtNome;
 	private JTextField txtEmail;
 	private JTextField txtUsuario;
-	private JTextField txtSenha;
 	private JDateChooser dataNasc;
 	
 	private JRadioButton rdbtnFeminino;
@@ -39,6 +39,7 @@ public class CadastroWindow extends JFrame {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
 	private UsuarioService usuarioService;
+	private JPasswordField txtSenha;
 
 	/**
 	 * Launch the application.
@@ -82,6 +83,11 @@ public class CadastroWindow extends JFrame {
 			
 		} catch (SQLException | IOException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário", "Cadastro", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			
+			AgendaWindow agendaWindow = new AgendaWindow();
+			agendaWindow.setVisible(true);
+			this.setVisible(false);
 		}
 	}
 	
@@ -186,10 +192,9 @@ public class CadastroWindow extends JFrame {
 		lblSenha.setBounds(10, 77, 45, 13);
 		panel_1.add(lblSenha);
 		
-		txtSenha = new JTextField();
-		txtSenha.setBounds(80, 74, 386, 19);
+		txtSenha = new JPasswordField();
+		txtSenha.setBounds(65, 74, 401, 19);
 		panel_1.add(txtSenha);
-		txtSenha.setColumns(10);
 		
 		JButton btnCadastrar = new JButton("Cadastrar");
 		btnCadastrar.addActionListener(new ActionListener() {

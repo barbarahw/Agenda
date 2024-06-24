@@ -13,6 +13,14 @@ public class UsuarioDAO {
 	}
 	
 	public void cadastrar(Usuario usuario) {
-		//TODO
+		
+	}
+	
+	public void buscarUsuario() {
+		
+	}
+	
+	public void excluirUsuario() {
+		
 	}
 }

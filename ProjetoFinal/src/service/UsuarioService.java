@@ -14,9 +14,24 @@ public class UsuarioService {
 		
 	}
 	
-public void cadastrar(Usuario usuario) throws SQLException, IOException {
+	public void cadastrar(Usuario usuario) throws SQLException, IOException {
 		
 		Connection conn = BancoDados.conectar();
 		new UsuarioDAO(conn).cadastrar(usuario);
 	}
+
+	public void buscarUsuario() {
+	
+	}
+
+	public void excluirUsuario() throws SQLException, IOException {
+		
+		Connection conn = BancoDados.conectar();
+		new UsuarioDAO(conn).excluirUsuario();
+	}
+	
+	public void verificarUsuario() {
+		
+	}
+
 }

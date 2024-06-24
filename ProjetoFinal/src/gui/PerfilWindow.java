@@ -1,24 +1,30 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import com.toedter.calendar.JDateChooser;
-import javax.swing.JList;
-import javax.swing.JSpinner;
-import com.toedter.components.JSpinField;
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-import java.awt.Choice;
-import javax.swing.border.TitledBorder;
 import javax.swing.border.MatteBorder;
-import java.awt.Color;
+import javax.swing.border.TitledBorder;
+
+import com.toedter.calendar.JDateChooser;
+
+import entities.Usuario;
+import service.UsuarioService;
+import javax.swing.JPasswordField;
 
 public class PerfilWindow extends JFrame {
 
@@ -28,11 +34,11 @@ public class PerfilWindow extends JFrame {
 	private JLabel lblFotoPerfil;
 	private JTextField txtEmail;
 	private JTextField txtUsuario;
-	private JTextField txtSenha;
+	private final ButtonGroup buttongroup = new ButtonGroup();
 
-	/**
-	 * Launch the application.
-	 */
+	private UsuarioService usuarioService;
+	private JPasswordField txtSenha;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -46,10 +52,29 @@ public class PerfilWindow extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	private void excluirUsuario() {
+		int confirmacao = JOptionPane.showConfirmDialog(null, "Deseja excluir o usuário?", "Confirmação", JOptionPane.YES_NO_OPTION);
+		if (confirmacao == 0) {
+			try {
+			
+				this.usuarioService.excluirUsuario();
+			
+			} catch (SQLException | IOException e) {
+				JOptionPane.showMessageDialog(null, "Erro ao excluir Usuario", "Excluir", JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "o usuário não foi excluído");
+		}
+		
+	}
+	
 	public PerfilWindow() {
+		initComponents();
+		
+		this.usuarioService = new UsuarioService();
+	}
+	
+	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 574, 418);
 		contentPane = new JPanel();
@@ -62,6 +87,7 @@ public class PerfilWindow extends JFrame {
 		txtNome.setBounds(216, 47, 326, 19);
 		contentPane.add(txtNome);
 		txtNome.setColumns(10);
+		//txtNome.setText(Usuario.getNome());
 		
 		lblFotoPerfil = new JLabel("New label");
 		lblFotoPerfil.setIcon(new ImageIcon(PerfilWindow.class.getResource("/gui/Perfil.png")));
@@ -111,6 +137,10 @@ public class PerfilWindow extends JFrame {
 		rdbtnNaoInformar.setBounds(6, 69, 103, 21);
 		panel.add(rdbtnNaoInformar);
 		
+		buttongroup.add(rdbtnFeminino);
+		buttongroup.add(rdbtnMasculino);
+		buttongroup.add(rdbtnNaoInformar);
+		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
 		panel_1.setBounds(10, 251, 385, 110);
@@ -130,16 +160,20 @@ public class PerfilWindow extends JFrame {
 		lblSenha.setBounds(10, 50, 45, 13);
 		panel_1.add(lblSenha);
 		
-		txtSenha = new JTextField();
-		txtSenha.setBounds(77, 47, 298, 19);
+		txtSenha = new JPasswordField();
+		txtSenha.setBounds(76, 47, 299, 19);
 		panel_1.add(txtSenha);
-		txtSenha.setColumns(10);
 		
 		JButton btnAtualizar = new JButton("Atualizar");
 		btnAtualizar.setBounds(429, 251, 85, 21);
 		contentPane.add(btnAtualizar);
 		
 		JButton btnExcluir = new JButton("Excluir Perfil");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				excluirUsuario();
+			}
+		});
 		btnExcluir.setForeground(new Color(255, 255, 255));
 		btnExcluir.setBackground(new Color(255, 0, 0));
 		btnExcluir.setBounds(429, 307, 113, 27);
