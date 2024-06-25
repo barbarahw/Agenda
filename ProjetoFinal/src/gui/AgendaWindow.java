@@ -1,6 +1,7 @@
 	package gui;
 
-import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,8 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import entities.Agenda;
 import entities.Usuario;
 import service.AgendaService;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import service.UsuarioService;
 
 public class AgendaWindow extends JFrame {
 
@@ -34,33 +34,22 @@ public class AgendaWindow extends JFrame {
 	private JSpinner spId;
 	
 	private AgendaService agendaService;
+	private UsuarioService usuarioService;
 	
 	private String usuario;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AgendaWindow frame = new AgendaWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	private void buscarAgendas() {
+	private void buscarAgendas(String usuario) {
 		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 		modelo.fireTableDataChanged();
 		modelo.setRowCount(0);
 		
 		try {
 			
-			List<Agenda> agendas = this.agendaService.buscarAgendas();
+			List<Agenda> agendas = this.agendaService.buscarAgendas(usuario);
 			
 			for (Agenda agenda : agendas) {
 				modelo.addRow(new Object[] {
@@ -102,21 +91,90 @@ public class AgendaWindow extends JFrame {
 	}
 	
 	private void verCompromissos() {
+		try {
+			
+			Agenda agenda = this.agendaService.buscarAgendaPorId(Integer.parseInt(this.spId.getValue().toString()));
+			if (agenda!=null) {
+				abrirCompromissos(agenda.getId());
+			}
+			
+		} catch (NumberFormatException | SQLException | IOException e) {
+			JOptionPane.showMessageDialog(null, "agenda não encontrada", "erro", JOptionPane.ERROR_MESSAGE);
+		}
+		
 		
 	}
 	
-	public AgendaWindow() {
+	private void abrirCompromissos(int id) {
+		
+		//TODO
+		CompromissoWindow compromissoWindow = new CompromissoWindow();
+		compromissoWindow.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	private void excluir() {
+		Agenda agenda = new Agenda();
+		
+		agenda.setId(Integer.parseInt(this.spId.getValue().toString()));
+		
+		try {
+			
+			this.agendaService.excluirAgenda(agenda);
+			
+		} catch (SQLException | IOException e) {
+			JOptionPane.showMessageDialog(null, "erro ao excluir agenda", "erro", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private Agenda buscarAgendaPorId() {
+		int id = Integer.parseInt(this.spId.getValue().toString());
+		
+		try {
+			
+			return this.agendaService.buscarAgendaPorId(id);
+			
+		} catch (SQLException | IOException e) {
+			JOptionPane.showMessageDialog(null, "agenda não encontrada", "erro", JOptionPane.ERROR_MESSAGE);
+			
+			return null;
+		}
+		
+	}
+	
+	private Usuario buscarUsuario(String usuario) {
+		try {
+			return this.usuarioService.buscarUsuario(usuario);
+		} catch (SQLException | IOException e) {
+			JOptionPane.showMessageDialog(null, "usuario não encontrado");
+			return null;
+		}
+	}
+	
+	private void abrirPerfil() {
+		
+		Usuario user1 = new Usuario("user", "senha", "maria", "Feminino", "email", null);
+		//PerfilWindow perfilwindow = new PerfilWindow(this.buscarUsuario(usuario));
+		PerfilWindow perfilwindow = new PerfilWindow(user1);
+		perfilwindow.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	public AgendaWindow(String Usuario) {
 		
 		initComponents();
 		
 		agendaService = new AgendaService();
+		usuarioService = new UsuarioService();
 		
-		this.buscarAgendas();
+		this.buscarAgendas(this.usuario);
+		
+		this.usuario = usuario;
 	}
 	
 	private void initComponents(){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 557, 412);
+		setBounds(100, 100, 557, 458);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -125,7 +183,7 @@ public class AgendaWindow extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Agendas", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(10, 10, 523, 180);
+		panel.setBounds(10, 44, 523, 195);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -162,7 +220,7 @@ public class AgendaWindow extends JFrame {
 				atualizarAgenda();
 			}
 		});
-		btnAtualizar.setBounds(53, 113, 85, 21);
+		btnAtualizar.setBounds(53, 108, 85, 21);
 		panel.add(btnAtualizar);
 		
 		spId = new JSpinner();
@@ -175,11 +233,20 @@ public class AgendaWindow extends JFrame {
 				verCompromissos();
 			}
 		});
-		btnCompromissos.setBounds(53, 144, 147, 26);
+		btnCompromissos.setBounds(50, 134, 147, 21);
 		panel.add(btnCompromissos);
 		
+		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				excluir();
+			}
+		});
+		btnExcluir.setBounds(53, 164, 85, 21);
+		panel.add(btnExcluir);
+		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 200, 523, 150);
+		scrollPane.setBounds(10, 261, 523, 150);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -191,5 +258,14 @@ public class AgendaWindow extends JFrame {
 			}
 		));
 		scrollPane.setViewportView(table);
+		
+		JButton btnPerfil = new JButton("Ver Perfil");
+		btnPerfil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirPerfil();
+			}
+		});
+		btnPerfil.setBounds(411, 10, 122, 21);
+		contentPane.add(btnPerfil);
 	}
 }

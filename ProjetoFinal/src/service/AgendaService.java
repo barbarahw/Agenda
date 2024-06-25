@@ -23,15 +23,27 @@ public class AgendaService {
 		new AgendaDAO(conn).cadastrar(agenda);
 	}
 	
-	public List<Agenda> buscarAgendas() throws SQLException, IOException {
+	public List<Agenda> buscarAgendas(String usuario) throws SQLException, IOException {
 		Connection conn = BancoDados.conectar();
 	
-		return new AgendaDAO(conn).buscarAgendas();
+		return new AgendaDAO(conn).buscarAgendas(usuario);
 	}
 	
 	public void atualizar(Agenda agenda) throws SQLException, IOException {
 		Connection conn = BancoDados.conectar();
 		
 		new AgendaDAO(conn).atualizar(agenda);
+	}
+	
+	public void excluirAgenda(Agenda agenda) throws SQLException, IOException {
+		Connection conn = BancoDados.conectar();
+		
+		new AgendaDAO(conn).excluir(agenda);
+	}
+	
+	public Agenda buscarAgendaPorId(int id) throws SQLException, IOException {
+		Connection conn = BancoDados.conectar();
+		
+		return new AgendaDAO(conn).buscarAgendaPorId(id);
 	}
 }

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,22 +36,16 @@ public class PerfilWindow extends JFrame {
 	private JTextField txtEmail;
 	private JTextField txtUsuario;
 	private final ButtonGroup buttongroup = new ButtonGroup();
+	private JRadioButton rdbtnMasculino;
+	private JRadioButton rdbtnFeminino;
+	private JRadioButton rdbtnNaoInformar;
+	private JDateChooser dateChooser;
 
 	private UsuarioService usuarioService;
 	private JPasswordField txtSenha;
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PerfilWindow frame = new PerfilWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private Usuario usuario;
+	
 
 	private void excluirUsuario() {
 		int confirmacao = JOptionPane.showConfirmDialog(null, "Deseja excluir o usuário?", "Confirmação", JOptionPane.YES_NO_OPTION);
@@ -68,10 +63,38 @@ public class PerfilWindow extends JFrame {
 		
 	}
 	
-	public PerfilWindow() {
+	private void checarSexo() {
+		if (this.usuario.getSexo() == "Masculino") {
+			this.rdbtnMasculino.setSelected(true);
+		} else if (this.usuario.getSexo() == "Feminino") {
+			this.rdbtnFeminino.setSelected(true);
+		} else {
+			this.rdbtnNaoInformar.setSelected(true);
+		}
+	}
+	
+	private void mudarFoto() {
+		JFileChooser seletor = new JFileChooser();
+		int valorRetorno = seletor.showSaveDialog(null);
+	}
+	
+	public PerfilWindow(Usuario usuario) {
 		initComponents();
 		
 		this.usuarioService = new UsuarioService();
+		this.usuario = usuario;
+		
+		this.mudar();
+	}
+	
+	private void mudar() {
+		txtNome.setText(this.usuario.getNome());
+		txtEmail.setText(this.usuario.getEmail());
+		dateChooser.setDate(this.usuario.getDataNascimento());
+		txtUsuario.setText(this.usuario.getUsuario());
+		txtSenha.setText(this.usuario.getSenha());
+		
+		this.checarSexo();
 	}
 	
 	private void initComponents() {
@@ -87,7 +110,6 @@ public class PerfilWindow extends JFrame {
 		txtNome.setBounds(216, 47, 326, 19);
 		contentPane.add(txtNome);
 		txtNome.setColumns(10);
-		//txtNome.setText(Usuario.getNome());
 		
 		lblFotoPerfil = new JLabel("New label");
 		lblFotoPerfil.setIcon(new ImageIcon(PerfilWindow.class.getResource("/gui/Perfil.png")));
@@ -108,10 +130,15 @@ public class PerfilWindow extends JFrame {
 		contentPane.add(lblEmail);
 		
 		JButton btnFotoPerfil = new JButton("Mudar Foto de Perfil");
+		btnFotoPerfil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mudarFoto();
+			}
+		});
 		btnFotoPerfil.setBounds(10, 199, 172, 21);
 		contentPane.add(btnFotoPerfil);
 		
-		JDateChooser dateChooser = new JDateChooser();
+		dateChooser = new JDateChooser();
 		dateChooser.setBounds(226, 171, 130, 19);
 		contentPane.add(dateChooser);
 		
@@ -125,21 +152,22 @@ public class PerfilWindow extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JRadioButton rdbtnFeminino = new JRadioButton("Feminino");
+		rdbtnFeminino = new JRadioButton("Feminino");
 		rdbtnFeminino.setBounds(6, 23, 103, 21);
 		panel.add(rdbtnFeminino);
 		
-		JRadioButton rdbtnMasculino = new JRadioButton("Masculino");
+		rdbtnMasculino = new JRadioButton("Masculino");
 		rdbtnMasculino.setBounds(6, 46, 103, 21);
 		panel.add(rdbtnMasculino);
 		
-		JRadioButton rdbtnNaoInformar = new JRadioButton("Não Informar");
+		rdbtnNaoInformar = new JRadioButton("Não Informar");
 		rdbtnNaoInformar.setBounds(6, 69, 103, 21);
 		panel.add(rdbtnNaoInformar);
 		
 		buttongroup.add(rdbtnFeminino);
 		buttongroup.add(rdbtnMasculino);
 		buttongroup.add(rdbtnNaoInformar);
+		
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));

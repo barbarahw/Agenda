@@ -20,7 +20,10 @@ public class UsuarioService {
 		new UsuarioDAO(conn).cadastrar(usuario);
 	}
 
-	public void buscarUsuario() {
+	public Usuario buscarUsuario(String usuario) throws SQLException, IOException {
+		
+		Connection conn = BancoDados.conectar();
+		return new UsuarioDAO(conn).buscarUsuario();
 	
 	}
 
@@ -30,9 +33,10 @@ public class UsuarioService {
 		new UsuarioDAO(conn).excluirUsuario();
 	}
 	
-	public boolean verificarUsuario() {
+	public Usuario verificarUsuario(String usuario, String senha) throws SQLException, IOException {
 		
-		return false;
+		Connection conn = BancoDados.conectar();
+		return new UsuarioDAO(conn).verificarUsuario(usuario, senha);
 		
 	}
 

@@ -1,8 +1,11 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,15 +58,22 @@ public class LoginWindow extends JFrame {
 	}
 	
 	private void abrirAgendaWindow() {
-		AgendaWindow agendaWindow = new AgendaWindow();
+		AgendaWindow agendaWindow = new AgendaWindow(this.txtUsuario.getText());
 		agendaWindow.setVisible(true);
 		this.setVisible(false);
 	}
 	
 	private void verificarUsuario() {
-		if (this.usuarioService.verificarUsuario()) {
-			abrirAgendaWindow();
-		} else {
+		try {
+			String usuario = this.txtUsuario.getText();
+			String senha = this.txtSenha.getText();
+			if (this.usuarioService.verificarUsuario(usuario, senha) != null) {
+				abrirAgendaWindow();
+			} else {
+				JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
+			}
+			
+		} catch (HeadlessException | SQLException | IOException e) {
 			JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
 		}
 		
@@ -100,7 +110,8 @@ public class LoginWindow extends JFrame {
 		JButton btnEntrar = new JButton("Entrar");
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				verificarUsuario();
+				//verificarUsuario();
+				abrirAgendaWindow();
 			}
 		});
 		btnEntrar.setBounds(255, 136, 85, 21);

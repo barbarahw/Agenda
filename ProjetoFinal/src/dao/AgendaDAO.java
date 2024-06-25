@@ -17,16 +17,16 @@ public class AgendaDAO {
 		this.conn = conn;
 	}
 	
-	public List<Agenda> buscarAgendas() throws SQLException{
+	public List<Agenda> buscarAgendas(String usuario) throws SQLException{
 		
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		
 		try {
-		st = conn.prepareStatement("select id, nome from agenda");
-		//st = conn.prepareStatement("select nome, descricao from agenda where usuario = ?");
+		//st = conn.prepareStatement("select id, nome from agenda");
+		st = conn.prepareStatement("select nome, descricao from agenda where usuario = ?");
 		
-		//st.setString(0, usuario);
+		st.setString(0, usuario);
 		rs = st.executeQuery();
 		
 		List<Agenda> agendas = new ArrayList<>();
@@ -54,5 +54,13 @@ public class AgendaDAO {
 	
 	public void atualizar(Agenda agenda) {
 		
+	}
+	
+	public void excluir(Agenda agenda) {
+		
+	}
+	
+	public Agenda buscarAgendaPorId(int Id) {
+		return null;
 	}
 }

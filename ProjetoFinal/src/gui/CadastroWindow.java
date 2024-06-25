@@ -81,14 +81,16 @@ public class CadastroWindow extends JFrame {
 		
 			this.usuarioService.cadastrar(usuario);
 			
-		} catch (SQLException | IOException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário", "Cadastro", JOptionPane.ERROR_MESSAGE);
-		} finally {
-			
-			AgendaWindow agendaWindow = new AgendaWindow();
+			AgendaWindow agendaWindow = new AgendaWindow(usuario.getUsuario());
 			agendaWindow.setVisible(true);
 			this.setVisible(false);
+			
+		} catch (SQLException | IOException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário", "Cadastro", JOptionPane.ERROR_MESSAGE);
 		}
+			
+		
+		
 	}
 	
 	private String verificarSelecaoRadioButtonSexo() {

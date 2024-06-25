@@ -16,11 +16,16 @@ public class UsuarioDAO {
 		
 	}
 	
-	public void buscarUsuario() {
+	public Usuario buscarUsuario() {
+		return null;
 		
 	}
 	
 	public void excluirUsuario() {
 		
+	}
+	
+	public Usuario verificarUsuario(String usuari, String senha) {
+		return null;
 	}
 }
