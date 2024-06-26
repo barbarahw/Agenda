@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -13,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -22,7 +25,6 @@ import com.toedter.calendar.JDateChooser;
 
 import entities.Usuario;
 import service.UsuarioService;
-import javax.swing.JPasswordField;
 
 public class CadastroWindow extends JFrame {
 
@@ -70,23 +72,28 @@ public class CadastroWindow extends JFrame {
 	private void cadastrar() {
 		try {
 			Usuario usuario = new Usuario();
+			
+			java.util.Date a = this.dataNasc.getDate();
+			
+			java.sql.Date dataNova = new java.sql.Date(a.getTime());
 		
 			usuario.setUsuario(this.txtUsuario.getText());
 			usuario.setSenha(this.txtSenha.getText());
 			usuario.setNome(this.txtNome.getText());
 			usuario.setSexo(verificarSelecaoRadioButtonSexo());
 			usuario.setEmail(this.txtEmail.getText());
-			usuario.setDataNascimento((Date) this.dataNasc.getDate());
+			usuario.setDataNascimento(dataNova);
 		
 		
 			this.usuarioService.cadastrar(usuario);
 			
-			AgendaWindow agendaWindow = new AgendaWindow(usuario.getUsuario());
+			AgendaWindow agendaWindow = new AgendaWindow(usuario);
 			agendaWindow.setVisible(true);
 			this.setVisible(false);
 			
 		} catch (SQLException | IOException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário", "Cadastro", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Cadastro", JOptionPane.ERROR_MESSAGE);
+			
 		}
 			
 		

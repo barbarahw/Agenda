@@ -35,10 +35,10 @@ public class AgendaService {
 		new AgendaDAO(conn).atualizar(agenda);
 	}
 	
-	public void excluirAgenda(Agenda agenda) throws SQLException, IOException {
+	public void excluirAgenda(int id) throws SQLException, IOException {
 		Connection conn = BancoDados.conectar();
 		
-		new AgendaDAO(conn).excluir(agenda);
+		new AgendaDAO(conn).excluir(id);
 	}
 	
 	public Agenda buscarAgendaPorId(int id) throws SQLException, IOException {

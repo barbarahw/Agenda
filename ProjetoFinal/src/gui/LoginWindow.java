@@ -57,10 +57,19 @@ public class LoginWindow extends JFrame {
 		this.setVisible(false);
 	}
 	
-	private void abrirAgendaWindow() {
-		AgendaWindow agendaWindow = new AgendaWindow(this.txtUsuario.getText());
-		agendaWindow.setVisible(true);
-		this.setVisible(false);
+	private void abrirAgendaWindow(String usuario, String senha) {
+		AgendaWindow agendaWindow;
+		try {
+			
+			agendaWindow = new AgendaWindow(this.usuarioService.verificarUsuario(usuario, senha));
+			agendaWindow.setVisible(true);
+			this.setVisible(false);
+			
+		} catch (SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void verificarUsuario() {
@@ -68,13 +77,14 @@ public class LoginWindow extends JFrame {
 			String usuario = this.txtUsuario.getText();
 			String senha = this.txtSenha.getText();
 			if (this.usuarioService.verificarUsuario(usuario, senha) != null) {
-				abrirAgendaWindow();
+				abrirAgendaWindow(txtUsuario.getText(), txtSenha.getText());
+				
 			} else {
 				JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (HeadlessException | SQLException | IOException e) {
-			JOptionPane.showMessageDialog(null, "Usuario não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		
@@ -110,8 +120,7 @@ public class LoginWindow extends JFrame {
 		JButton btnEntrar = new JButton("Entrar");
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//verificarUsuario();
-				abrirAgendaWindow();
+				verificarUsuario();
 			}
 		});
 		btnEntrar.setBounds(255, 136, 85, 21);

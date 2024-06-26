@@ -7,29 +7,51 @@ import java.util.List;
 
 public class Compromisso {
 
+	private int id;
 	private String titulo;
 	private String descricao;
-	private Date date;
+	private Date dataInicio;
+	private Date dataTermino;
 	private Time horarioInicio;
 	private Time horarioTermino;
 	private String Local;
 	private Agenda agenda;
 	private List<Usuario> convidados;
-	private Timestamp notificacao;
+	private Date dataNotif;
+	private Time horaNotif;
 	
-	
-	public Compromisso(String titulo, String descricao, Date date, Time horarioInicio, Time horarioTermino,
-			String local, Agenda agenda, List<Usuario> convidados, Timestamp notificacao) {
-	
-		this.titulo = titulo;
-		this.descricao = descricao;
-		this.date = date;
-		this.horarioInicio = horarioInicio;
-		this.horarioTermino = horarioTermino;
-		Local = local;
-		this.agenda = agenda;
-		this.convidados = convidados;
-		this.notificacao = notificacao;
+	public Compromisso () {
+		
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+
+	public void setDataInicio(Date date) {
+		this.dataInicio = date;
+	}
+
+
+	public Date getDataTermino() {
+		return dataTermino;
+	}
+
+
+	public void setDataTermino(Date dataTermino) {
+		this.dataTermino = dataTermino;
 	}
 
 
@@ -50,16 +72,6 @@ public class Compromisso {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-
-	public Date getDate() {
-		return date;
-	}
-
-
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
 
@@ -113,14 +125,27 @@ public class Compromisso {
 	}
 
 
-	public Timestamp getNotificacao() {
-		return notificacao;
+	public Date getDataNotif() {
+		return dataNotif;
 	}
 
 
-	public void setNotificacao(Timestamp notificacao) {
-		this.notificacao = notificacao;
+	public void setDataNotif(Date dataNotif) {
+		this.dataNotif = dataNotif;
 	}
+
+
+	public Time getHoraNotif() {
+		return horaNotif;
+	}
+
+
+	public void setHoraNotif(Time horaNotif) {
+		this.horaNotif = horaNotif;
+	}
+
+
+
 	
 	
 	

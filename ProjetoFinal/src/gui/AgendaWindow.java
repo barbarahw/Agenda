@@ -35,42 +35,24 @@ public class AgendaWindow extends JFrame {
 	
 	private AgendaService agendaService;
 	private UsuarioService usuarioService;
-	
-	private String usuario;
+	private Usuario usuario;
+	private String username;
+	private String senha;
 
-	/**
-	 * Launch the application.
-	 */
 
-	private void buscarAgendas(String usuario) {
-		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-		modelo.fireTableDataChanged();
-		modelo.setRowCount(0);
-		
-		try {
-			
-			List<Agenda> agendas = this.agendaService.buscarAgendas(usuario);
-			
-			for (Agenda agenda : agendas) {
-				modelo.addRow(new Object[] {
-				agenda.getId(),
-				agenda.getNome()
-				});
-			}
-			
-		} catch (SQLException | IOException e) {
-			JOptionPane.showMessageDialog(null, "Nenhuma agenda encontrada", "busca", JOptionPane.ERROR_MESSAGE);
-		}
-	}
-	
 	private void criarAgenda() {
 		try {
 			Agenda agenda = new Agenda();
 			
 			agenda.setNome(txtNome.getText());
 			agenda.setDescricao(txtDescricao.getText());
+			agenda.setUsuario(this.usuario);
 			
 			this.agendaService.criarAgenda(agenda);
+			
+			JOptionPane.showMessageDialog(null, "agenda criada com sucesso");
+			this.buscarAgendas(username);
+			
 		} catch (IOException | SQLException e) {
 			JOptionPane.showMessageDialog(null, "erro ao cadastrar agenda", "erro", JOptionPane.ERROR_MESSAGE);
 		}
@@ -85,6 +67,8 @@ public class AgendaWindow extends JFrame {
 			agenda.setDescricao(txtDescricao.getText());
 			
 			this.agendaService.atualizar(agenda);
+			
+			this.buscarAgendas(username);
 		}catch (IOException | SQLException e) {
 			JOptionPane.showMessageDialog(null, "erro ao atualizar agenda", "erro", JOptionPane.ERROR_MESSAGE);
 		}
@@ -105,25 +89,20 @@ public class AgendaWindow extends JFrame {
 		
 	}
 	
+	
 	private void abrirCompromissos(int id) {
 		
-		//TODO
-		CompromissoWindow compromissoWindow = new CompromissoWindow();
+		CompromissoWindow compromissoWindow = new CompromissoWindow(this.buscarAgendaPorId(), this);
 		compromissoWindow.setVisible(true);
 		this.setVisible(false);
 	}
 	
 	private void excluir() {
-		Agenda agenda = new Agenda();
-		
-		agenda.setId(Integer.parseInt(this.spId.getValue().toString()));
-		
 		try {
-			
-			this.agendaService.excluirAgenda(agenda);
+			this.agendaService.excluirAgenda(Integer.parseInt(this.spId.getValue().toString()));
 			
 		} catch (SQLException | IOException e) {
-			JOptionPane.showMessageDialog(null, "erro ao excluir agenda", "erro", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"erro ao deletar agenda, só é possível deletar uma agenda sem compromissos", "erro", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -144,7 +123,7 @@ public class AgendaWindow extends JFrame {
 	
 	private Usuario buscarUsuario(String usuario) {
 		try {
-			return this.usuarioService.buscarUsuario(usuario);
+			return this.usuarioService.verificarUsuario(this.usuario.getUsuario(), this.usuario.getSenha());
 		} catch (SQLException | IOException e) {
 			JOptionPane.showMessageDialog(null, "usuario não encontrado");
 			return null;
@@ -153,24 +132,54 @@ public class AgendaWindow extends JFrame {
 	
 	private void abrirPerfil() {
 		
-		Usuario user1 = new Usuario("user", "senha", "maria", "Feminino", "email", null);
-		//PerfilWindow perfilwindow = new PerfilWindow(this.buscarUsuario(usuario));
-		PerfilWindow perfilwindow = new PerfilWindow(user1);
+		PerfilWindow perfilwindow;
+		perfilwindow = new PerfilWindow(this.usuario.getUsuario(), this.usuario.getSenha());
+		
 		perfilwindow.setVisible(true);
 		this.setVisible(false);
+
+		
 	}
 	
-	public AgendaWindow(String Usuario) {
+	private void buscarAgendas(String username) {
+		try {
+			DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+			modelo.fireTableDataChanged();
+			modelo.setRowCount(0);
+			
+			List<Agenda> agendas = this.agendaService.buscarAgendas(username);
+			
+			for (Agenda agenda : agendas ) {
+				modelo.addRow(new Object [] {
+						agenda.getId(),
+						agenda.getNome()
+				});
+			}
+		} catch(SQLException | IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+	}
+	
+	public AgendaWindow(Usuario usuario) {
+		
+		this.usuario = usuario;
+		this.username = usuario.getUsuario();
 		
 		initComponents();
 		
 		agendaService = new AgendaService();
 		usuarioService = new UsuarioService();
 		
-		this.buscarAgendas(this.usuario);
+		this.buscarAgendas(usuario.getUsuario());
 		
-		this.usuario = usuario;
 	}
+	
+	
+	/*public static void main(String[] args) {
+		NotifThread notificacao = new NotifThread("thread", 1000);
+		notificacao.start();
+	}*/
+	
 	
 	private void initComponents(){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -20,17 +20,10 @@ public class UsuarioService {
 		new UsuarioDAO(conn).cadastrar(usuario);
 	}
 
-	public Usuario buscarUsuario(String usuario) throws SQLException, IOException {
+	public void excluirUsuario(String usuario) throws SQLException, IOException {
 		
 		Connection conn = BancoDados.conectar();
-		return new UsuarioDAO(conn).buscarUsuario();
-	
-	}
-
-	public void excluirUsuario() throws SQLException, IOException {
-		
-		Connection conn = BancoDados.conectar();
-		new UsuarioDAO(conn).excluirUsuario();
+		new UsuarioDAO(conn).excluirUsuario(usuario);
 	}
 	
 	public Usuario verificarUsuario(String usuario, String senha) throws SQLException, IOException {
@@ -38,6 +31,11 @@ public class UsuarioService {
 		Connection conn = BancoDados.conectar();
 		return new UsuarioDAO(conn).verificarUsuario(usuario, senha);
 		
+	}
+	
+	public void atualizar(Usuario usuario) throws SQLException, IOException {
+		Connection conn = BancoDados.conectar();
+		new UsuarioDAO(conn).atualizar(usuario);
 	}
 
 }

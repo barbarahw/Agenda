@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entities.Agenda;
+import entities.Usuario;
 
 public class AgendaDAO {
 
@@ -23,19 +24,21 @@ public class AgendaDAO {
 		ResultSet rs = null;
 		
 		try {
-		//st = conn.prepareStatement("select id, nome from agenda");
-		st = conn.prepareStatement("select nome, descricao from agenda where usuario = ?");
+			st = conn.prepareStatement("select * from agenda where usuario = ?");
 		
-		st.setString(0, usuario);
-		rs = st.executeQuery();
+			st.setString(1, usuario);
 		
-		List<Agenda> agendas = new ArrayList<>();
+			rs = st.executeQuery();
 		
-		while (rs.next()) {
-			Agenda agenda = new Agenda();
+			List<Agenda> agendas = new ArrayList<>();
+		
+			while (rs.next()) {
+				Agenda agenda = new Agenda();
 			
-			agenda.setId(rs.getInt("id"));
-			agenda.setNome(rs.getString("nome"));
+				agenda.setId(rs.getInt("id"));
+				agenda.setNome(rs.getString("nome"));
+				agenda.setDescricao(rs.getString("descricao"));
+				//agenda.getUsuario().setUsuario(rs.getString("usuario"));
 			
 			agendas.add(agenda);
 		}
@@ -48,19 +51,83 @@ public class AgendaDAO {
 		}
 	}
 	
-	public void cadastrar(Agenda agenda) {
-		
-	}
+	public void cadastrar(Agenda agenda) throws SQLException {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("insert into agenda (nome, descricao, usuario) values (?, ?, ?)");
+
+            st.setString(1, agenda.getNome());
+            st.setString(2, agenda.getDescricao());
+            st.setString(3, agenda.getUsuario().getUsuario());
+
+            st.executeUpdate();
+
+        }finally{
+            BancoDados.finalizarStatement(st);
+            BancoDados.desconectar();
+        }
+    }
 	
-	public void atualizar(Agenda agenda) {
-		
-	}
+	public void atualizar(Agenda agenda) throws SQLException {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("update agenda set nome = ?, descricao = ? where id = ?");
+
+            st.setString(1, agenda.getNome());
+            st.setString(2, agenda.getDescricao());
+            st.setInt(3, agenda.getId());
+
+            st.executeUpdate();
+
+        }finally{
+            BancoDados.finalizarStatement(st);
+            BancoDados.desconectar();
+        }
+    }
 	
-	public void excluir(Agenda agenda) {
-		
-	}
+	public int excluir(int id) throws SQLException {
+        PreparedStatement st = null;
+
+        try{
+            st = conn.prepareStatement("delete from agenda where id = ?");
+            st.setInt(1, id);
+            int linhasManipuldas = st.executeUpdate();
+
+            return linhasManipuldas;
+
+        }finally{
+            BancoDados.finalizarStatement(st);
+            BancoDados.desconectar();
+        }
+    }
 	
-	public Agenda buscarAgendaPorId(int Id) {
-		return null;
-	}
+	public Agenda buscarAgendaPorId(int Id) throws SQLException {
+
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try{
+            st = conn.prepareStatement("select * from agenda where id = ?");
+            st.setInt(1, Id);
+
+            rs = st.executeQuery();
+            if (rs.next()) {
+            	Agenda agenda = new Agenda();
+
+            	agenda.setId(rs.getInt("id"));
+            	agenda.setNome(rs.getString("nome"));
+            	agenda.setDescricao(rs.getString("descricao"));
+            
+            	return agenda;
+            }
+            return null;
+
+        }finally{
+            BancoDados.finalizarStatement(st);
+            BancoDados.finalizarResultSet(rs);
+            BancoDados.desconectar();
+        }
+    }
 }
